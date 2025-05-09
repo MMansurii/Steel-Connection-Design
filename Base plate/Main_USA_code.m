@@ -1,6 +1,7 @@
-// Matlab file 
+%% Matlab file 
 clc
 clear
+
 
 OUTPUT = fopen('BasePlate.txt','w');
 fprintf(OUTPUT,'BasePlate Connection\r\n');
@@ -83,13 +84,15 @@ a1=3*(e-B/2);
 a2=6*n*As/D*(f+e);
 a3=-a2*(B*.5+f);
 
-syms x
-eq=x^3+a1*x^2+a2*x+a3==0;
-s=vpasolve(eq,x);
-x=(max(s));
-if isreal(x)==0
-    x=(min(s));
+% Coefficients of the cubic
+coeffs = [1, a1, a2, a3];
+r = roots(coeffs);            % find all (possibly complex) roots
+real_roots = r(abs(imag(r))<1e-6);  % keep only nearly-real ones
+if isempty(real_roots)
+    error('No real root found');
 end
+x = max(real_roots);          % or choose the physically meaningful root
+
    
 fup=2*Pu*(e+f)/(x*D*(B/2+f-x/3));
 Tu=Pu*(e+x/3-B/2)/(B/2+f-x/3);
